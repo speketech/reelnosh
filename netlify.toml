@@ -1,0 +1,50 @@
+# netlify.toml
+
+[build]
+  # This is the directory where Netlify will look for your deploy-ready files.
+  # Since your index.html is in the root, it should be blank or "./".
+  # If you had a build step that outputs to a folder like 'dist' or 'public', you'd put that here.
+  publish = "."
+
+  # The command Netlify runs to build your site.
+  # For pure HTML/CSS/JS, this is often blank.
+  # Netlify automatically detects and builds functions in netlify/functions.
+  command = "" # No build command needed for this static site
+
+  # The directory where Netlify Functions are located.
+  # This is crucial for your subscribe.js function.
+  functions = "netlify/functions"
+
+[functions]
+  # Specify the Node.js version for your serverless functions (recommended)
+  node_bundler = "esbuild" # Recommended for faster function builds
+  node_version = "18" # Or "20" if you prefer a newer version. Check Netlify's supported versions.
+
+  # You can also set specific environment variables for functions here,
+  # but site-level env vars (set in Netlify UI) are generally fine for MONGODB_URI.
+  # Example:
+  # MY_FUNCTION_VAR = "some_value"
+
+[[redirects]]
+  # This is a crucial redirect that helps prevent 404 errors for Single Page Applications (SPAs)
+  # or when the server tries to find a file at a specific path.
+  # It tells Netlify: if a path doesn't match an existing file, serve index.html instead.
+  from = "/*"
+  to = "/index.html"
+  status = 200 # This makes it a rewrite, not a redirect (the URL in the browser won't change)
+
+# You can add more redirects if needed, for example:
+# [[redirects]]
+#   from = "/old-path"
+#   to = "/new-path"
+#   status = 301 # Permanent redirect
+
+# Example for setting custom headers (e.g., for security or caching)
+# [[headers]]
+#   for = "/*" # Apply to all paths
+#   [headers.values]
+#     X-Frame-Options = "DENY"
+#     X-Content-Type-Options = "nosniff"
+#     Referrer-Policy = "no-referrer-when-downgrade"
+#     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+#     Content-Security-Policy = "default-src 'self' *.netlify.app; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com;"
